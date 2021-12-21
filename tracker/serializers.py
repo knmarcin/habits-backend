@@ -2,12 +2,26 @@ from rest_framework import serializers
 from tracker.models import Counter, Habit
 
 
+class HabitPostSerializer(serializers.ModelSerializer):
+
+    owner = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
+    class Meta:
+        model = Habit
+        fields = ['name', 'owner']
+
+
+
+
 class HabitSerializer(serializers.ModelSerializer):
     count = serializers.SerializerMethodField()
 
     class Meta:
         model = Habit
-        fields = ['name','habit', 'count']
+        fields = ['name', 'created_at', 'count', 'owner']
 
-    def get_count(self, obj):
-        return Habit.objects.filter(id=obj.habit.id).count()
+    @staticmethod
+    def get_count(obj):
+        return Counter.objects.filter(habit_id=obj.id).count()
+
+
