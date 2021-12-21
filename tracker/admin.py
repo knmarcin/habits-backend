@@ -1,3 +1,5 @@
 from django.contrib import admin
+from tracker.models import Habit, Counter
 
-# Register your models here.
+admin.site.register(Habit)
+admin.site.register(Counter)
