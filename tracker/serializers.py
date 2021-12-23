@@ -26,6 +26,7 @@ class HabitSerializer(serializers.ModelSerializer):
 
 
 class CounterSerializer(serializers.ModelSerializer):
+    accomplished = serializers.DateField(format="%Y-%m-%d")
     class Meta:
         model = Counter
-        fields = ('habit',)
+        fields = ('habit', 'accomplished')

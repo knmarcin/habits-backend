@@ -1,5 +1,5 @@
 import datetime
-
+from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
@@ -63,13 +63,18 @@ class AddCountView(APIView):
 
     @staticmethod
     def post(request, pk):
-        try:
-            serializer = CounterSerializer(data=request.data)
-            if serializer.is_valid():
-                Counter.objects.create(habit_id=pk)
-                return Response(serializer.data)
-        except IntegrityError:
-            obj = Counter.objects.get(accomplished=datetime.date.today(), habit_id=pk)
-            obj.delete()
-            return Response(status=status.HTTP_200_OK)
-        return Response(serializer.errors)
+
+        serializer = CounterSerializer(data=request.data)
+
+        if serializer.is_valid():
+            try:
+
+                obj = Counter.objects.get(habit_id=pk, accomplished=serializer.data['accomplished'])
+
+                obj.delete()
+                return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
+            except Counter.DoesNotExist:
+                Counter.objects.create(habit_id=pk, accomplished=serializer.data['accomplished']).save()
+                return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
+        print(serializer.errors)
+        return Response(serializer.errors, status=status.HTTP_204_NO_CONTENT)

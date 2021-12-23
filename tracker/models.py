@@ -11,8 +11,6 @@ class Habit(models.Model):
 
 class Counter(models.Model):
     """Simple counters for habits with unique date/habit_id"""
-    accomplished = models.DateField(auto_now_add=True)
+    accomplished = models.DateField()
     habit = models.ForeignKey(Habit, on_delete=models.CASCADE)
 
-    class Meta:
-        unique_together = ('accomplished', 'habit',)
