@@ -68,9 +68,7 @@ class AddCountView(APIView):
 
         if serializer.is_valid():
             try:
-
                 obj = Counter.objects.get(habit_id=pk, accomplished=serializer.data['accomplished'])
-
                 obj.delete()
                 return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
             except Counter.DoesNotExist:
