@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime, timedelta
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework import status
@@ -17,6 +17,7 @@ class HabitViewSet(APIView):
             serializer = HabitSerializer(queryset, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except TypeError:
+
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
     @staticmethod
@@ -63,9 +64,7 @@ class AddCountView(APIView):
 
     @staticmethod
     def post(request, pk):
-
         serializer = CounterSerializer(data=request.data)
-
         if serializer.is_valid():
             try:
                 obj = Counter.objects.get(habit_id=pk, accomplished=serializer.data['accomplished'])
@@ -74,5 +73,16 @@ class AddCountView(APIView):
             except Counter.DoesNotExist:
                 Counter.objects.create(habit_id=pk, accomplished=serializer.data['accomplished']).save()
                 return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
-        print(serializer.errors)
         return Response(serializer.errors, status=status.HTTP_204_NO_CONTENT)
+
+
+class CountViewSet(APIView):
+    @staticmethod
+    def get(request):
+        try:
+            queryset = Counter.objects.filter(habit__owner_id=request.user,
+                                              habit__counter__accomplished__gte=datetime.now()-timedelta(days=7))
+            serializer = CounterSerializer(queryset, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except TypeError:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
