@@ -72,7 +72,7 @@ class AddCountView(APIView):
                 return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
             except Counter.DoesNotExist:
                 Counter.objects.create(habit_id=pk, accomplished=serializer.data['accomplished']).save()
-                return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
+                return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_204_NO_CONTENT)
 
 
