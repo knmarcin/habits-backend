@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from django.db import IntegrityError
 
 from tracker.models import Habit, Counter
-from tracker.serializers import HabitSerializer, HabitPostSerializer, CounterSerializer
+from tracker.serializers import HabitSerializer, HabitPostSerializer, CounterSerializer, RegisterSerializer
 
 
 class HabitViewSet(APIView):
@@ -86,3 +86,17 @@ class CountViewSet(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except TypeError:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+
+class UserCreate(APIView):
+    """
+    Create user
+    """
+
+    @staticmethod
+    def post(request):
+        serializer = RegisterSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+            if user:
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
