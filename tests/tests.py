@@ -2,13 +2,13 @@ from rest_framework.test import APITestCase
 from django.contrib.auth.models import User
 from rest_framework import status
 
-# Create your tests here.
+
 class AccountsTest(APITestCase):
     def test_create_user(self):
         data = {
             'username': 'foobar',
             'email': 'foobar@example.com',
-            'password':"testpassword123"
+            'password': "testpassword123"
         }
         response = self.client.post('/register/', data)
         print(response)
